@@ -1,7 +1,16 @@
-import './App.css'
+import { FC } from 'react'
 
-const App = () => {
-  return <h1 className="text-3xl font-bold underline">Hello World!</h1>
+const App: FC = () => {
+  return (
+    <div className="flex flex-col h-screen">
+      <header className="h-8 px-4 bg-amber-300">
+        <span className="text-lg font-semibold">ynymnote</span>
+      </header>
+      <div>test</div>
+      <div>test</div>
+      <div>test</div>
+    </div>
+  )
 }
 
 export default App
