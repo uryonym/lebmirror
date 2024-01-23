@@ -1,4 +1,4 @@
-import { FC, useState } from 'react'
+import { FC, ReactNode, useState } from 'react'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faBars, faXmark } from '@fortawesome/free-solid-svg-icons'
 
@@ -62,11 +62,15 @@ const App: FC = () => {
   )
 }
 
-const Section = ({ children }) => {
+type SectionProps = {
+  children: ReactNode
+}
+
+const Section: FC<SectionProps> = ({ children }) => {
   return <li className="pt-2">{children}</li>
 }
 
-const Page = ({ children }) => {
+const Page: FC<SectionProps> = ({ children }) => {
   return <li className="pt-2">{children}</li>
 }
 
