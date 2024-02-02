@@ -12,7 +12,7 @@ const App: FC = () => {
   return (
     <div className="flex flex-col h-screen">
       <header className="h-8 px-4 bg-amber-300">
-        <span className="text-lg font-semibold">ynymnote</span>
+        <span className="text-lg font-semibold">lebmirror</span>
       </header>
       <main className="flex-1 flex mb-14">page editor</main>
       <BottomNavBar>
