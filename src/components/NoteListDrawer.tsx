@@ -1,9 +1,10 @@
-import { FC, ReactNode, useState } from 'react'
+import { FC, ReactNode, useEffect, useState } from 'react'
 import BottomNavBar from './BottomNavBar'
 import IconButton from './IconButton'
 import { faXmark } from '@fortawesome/free-solid-svg-icons'
-import { useNotes } from '../hooks/useNotes'
 import NoteFormDialog from './NoteFormDialog'
+import { useAppDispatch, useAppSelector } from '../hooks/redux'
+import { fetchNotes, noteSelector } from '../features/noteSlice'
 
 type NoteListDrawerProps = {
   isShow: boolean
@@ -11,21 +12,22 @@ type NoteListDrawerProps = {
 }
 
 const NoteListDrawer: FC<NoteListDrawerProps> = ({ isShow, onClose }) => {
+  const dispatch = useAppDispatch()
+  const { notes } = useAppSelector(noteSelector)
+
   const [isShowDialog, setIsShowDialog] = useState(false)
 
-  const { data, error, isLoading } = useNotes()
-
-  if (error) return <div>{error.message}</div>
-  if (isLoading) return <div>Loading...</div>
-  if (!data) throw new Error()
+  useEffect(() => {
+    dispatch(fetchNotes())
+  }, [])
 
   return (
     <div
       className={`${isShow ? '' : 'hidden'} absolute top-0 left-0 h-screen w-screen bg-white`}
     >
       <ul className="w-full">
-        {data.map((note) => (
-          <NoteList key={note.seq} onClick={() => {}}>
+        {notes.map((note) => (
+          <NoteList key={note.id} onClick={() => {}}>
             {note.name}
           </NoteList>
         ))}

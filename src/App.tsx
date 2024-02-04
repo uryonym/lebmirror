@@ -1,35 +1,59 @@
-import { FC, useState } from 'react'
-import { faBars } from '@fortawesome/free-solid-svg-icons'
-import BottomNavBar from './components/BottomNavBar'
-import PageListDrawer from './components/PageListDrawer'
-import NoteListDrawer from './components/NoteListDrawer'
-import IconButton from './components/IconButton'
+import { FC, useCallback, useEffect } from 'react'
+import { Route, Routes, useLocation, useNavigate } from 'react-router-dom'
+import Home from './pages/Home'
+import Login from './pages/Login'
+import { useAppDispatch, useAppSelector } from './hooks/redux'
+import { authSelector, login } from './features/authSlice'
+import { firebaseAuth } from './lib/firebase'
 
 const App: FC = () => {
-  const [isShowNote, setIsShowNote] = useState(false)
-  const [isShowPage, setIsShowPage] = useState(false)
+  const dispatch = useAppDispatch()
+  const navigate = useNavigate()
+  const location = useLocation()
+  const { authenticated } = useAppSelector(authSelector)
+
+  const refresh = useCallback(
+    async (uid: string, displayName: string, email: string) => {
+      const userData = {
+        uid,
+        displayName,
+        email,
+      }
+      return dispatch(login(userData))
+    },
+    [dispatch]
+  )
+
+  useEffect(() => {
+    const f = async () => {
+      firebaseAuth.onAuthStateChanged(async (user) => {
+        if (user && authenticated) {
+          if (location.pathname === '/login') {
+            navigate('/')
+          }
+        }
+        if (user && !authenticated) {
+          return await refresh(
+            user.uid,
+            user.displayName ?? '',
+            user.email ?? ''
+          )
+        }
+        if (!user && !authenticated) {
+          if (location.pathname !== '/login') {
+            navigate('/login')
+          }
+        }
+      })
+    }
+    f()
+  })
 
   return (
-    <div className="flex flex-col h-screen">
-      <header className="h-8 px-4 bg-amber-300">
-        <span className="text-lg font-semibold">lebmirror</span>
-      </header>
-      <main className="flex-1 flex mb-14">page editor</main>
-      <BottomNavBar>
-        <button type="button" onClick={() => setIsShowNote(true)}>
-          ノート
-        </button>
-        <IconButton icon={faBars} onClick={() => setIsShowPage(true)} />
-      </BottomNavBar>
-      <NoteListDrawer
-        isShow={isShowNote}
-        onClose={() => setIsShowNote(false)}
-      />
-      <PageListDrawer
-        isShow={isShowPage}
-        onClose={() => setIsShowPage(false)}
-      />
-    </div>
+    <Routes>
+      <Route path="/" element={<Home />} />
+      <Route path="login" element={<Login />} />
+    </Routes>
   )
 }
 

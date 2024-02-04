@@ -1,5 +1,4 @@
 import { FC, useState } from 'react'
-import { Note, useNotes } from '../hooks/useNotes'
 
 type NoteFormDialogProps = {
   isShow: boolean
@@ -10,10 +9,8 @@ type NoteFormDialogProps = {
 const NoteFormDialog: FC<NoteFormDialogProps> = ({ isShow, onClose, note }) => {
   const [name, setName] = useState<string>('')
 
-  const { createNote, updateNote } = useNotes()
-
   const handleRegister = () => {
-    note ? updateNote(note, name) : createNote(name)
+    // note ? updateNote(note, name) : createNote(name)
     onClose()
   }
 
