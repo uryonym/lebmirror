@@ -1,11 +1,12 @@
-import { FC, MouseEventHandler, ReactNode, useState } from 'react'
+import { FC, useState } from 'react'
 import BottomNavBar from './BottomNavBar'
 import IconButton from './IconButton'
-import { faXmark } from '@fortawesome/free-solid-svg-icons'
+import { faRotate, faXmark } from '@fortawesome/free-solid-svg-icons'
 import NoteFormDialog from './NoteFormDialog'
 import { useAppDispatch, useAppSelector } from '../hooks/redux'
 import { fetchNotes, noteSelector, setCurrentNote } from '../features/noteSlice'
 import { fetchSections } from '../features/sectionSlice'
+import NoteList from './NoteList'
 
 type NoteListDrawerProps = {
   isShow: boolean
@@ -19,7 +20,7 @@ const NoteListDrawer: FC<NoteListDrawerProps> = ({ isShow, onClose }) => {
   const [isShowDialog, setIsShowDialog] = useState(false)
 
   // ノート一覧を取得する
-  const handleClick = () => {
+  const handleGetNotes = () => {
     dispatch(fetchNotes())
   }
 
@@ -36,9 +37,6 @@ const NoteListDrawer: FC<NoteListDrawerProps> = ({ isShow, onClose }) => {
     <div
       className={`${isShow ? '' : 'hidden'} absolute top-0 left-0 h-screen w-screen bg-white`}
     >
-      <button type="button" onClick={handleClick}>
-        ノート一覧を取得
-      </button>
       <ul className="w-full">
         {notes.map((note) => (
           <NoteList key={note.id} onClick={handleSelect(note.id ?? '')}>
@@ -47,9 +45,12 @@ const NoteListDrawer: FC<NoteListDrawerProps> = ({ isShow, onClose }) => {
         ))}
       </ul>
       <BottomNavBar>
-        <button type="button" onClick={() => setIsShowDialog(true)}>
-          新規作成
-        </button>
+        <div>
+          <button type="button" onClick={() => setIsShowDialog(true)}>
+            新規作成
+          </button>
+          <IconButton icon={faRotate} onClick={handleGetNotes} />
+        </div>
         <IconButton icon={faXmark} onClick={onClose} />
       </BottomNavBar>
       <NoteFormDialog
@@ -57,19 +58,6 @@ const NoteListDrawer: FC<NoteListDrawerProps> = ({ isShow, onClose }) => {
         onClose={() => setIsShowDialog(false)}
       />
     </div>
-  )
-}
-
-type NoteListProps = {
-  onClick: MouseEventHandler<HTMLLIElement>
-  children: ReactNode
-}
-
-const NoteList: FC<NoteListProps> = ({ onClick, children }) => {
-  return (
-    <li className="py-4 px-8 border-b" onClick={onClick}>
-      {children}
-    </li>
   )
 }
 

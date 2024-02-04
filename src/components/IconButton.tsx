@@ -9,7 +9,7 @@ type IconButtonProps = {
 
 const IconButton: FC<IconButtonProps> = ({ icon, onClick }) => {
   return (
-    <button className="p-2 mx-1" type="button" onClick={onClick}>
+    <button className="p-2 mx-2" type="button" onClick={onClick}>
       <FontAwesomeIcon icon={icon} size="xl" />
     </button>
   )
