@@ -19,7 +19,7 @@ const NoteListDrawer: FC<NoteListDrawerProps> = ({ isShow, onClose }) => {
 
   useEffect(() => {
     dispatch(fetchNotes())
-  }, [])
+  }, [dispatch])
 
   return (
     <div

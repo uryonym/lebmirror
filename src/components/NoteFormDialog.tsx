@@ -1,4 +1,5 @@
 import { FC, useState } from 'react'
+import { Note } from '../lib/firestoreApi'
 
 type NoteFormDialogProps = {
   isShow: boolean
@@ -10,7 +11,7 @@ const NoteFormDialog: FC<NoteFormDialogProps> = ({ isShow, onClose, note }) => {
   const [name, setName] = useState<string>('')
 
   const handleRegister = () => {
-    // note ? updateNote(note, name) : createNote(name)
+    console.log(note)
     onClose()
   }
 

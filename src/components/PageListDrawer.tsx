@@ -1,6 +1,5 @@
 import { FC, ReactNode } from 'react'
 import BottomNavBar from './BottomNavBar'
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faXmark } from '@fortawesome/free-solid-svg-icons'
 import IconButton from './IconButton'
 
