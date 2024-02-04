@@ -1,5 +1,8 @@
 import { FC, useState } from 'react'
 import { Note } from '../lib/firestoreApi'
+import { useAppDispatch } from '../hooks/redux'
+import { changeNote, createNote } from '../features/noteSlice'
+import { firebaseAuth } from '../lib/firebase'
 
 type NoteFormDialogProps = {
   isShow: boolean
@@ -8,10 +11,22 @@ type NoteFormDialogProps = {
 }
 
 const NoteFormDialog: FC<NoteFormDialogProps> = ({ isShow, onClose, note }) => {
+  const dispatch = useAppDispatch()
+
   const [name, setName] = useState<string>('')
 
   const handleRegister = () => {
-    console.log(note)
+    if (note) {
+      const data = { ...note, name: name }
+      dispatch(changeNote(data))
+    } else {
+      const data: Note = {
+        name: name,
+        uid: firebaseAuth.currentUser?.uid ?? '',
+        createdAt: new Date(),
+      }
+      dispatch(createNote(data))
+    }
     onClose()
   }
 
@@ -20,7 +35,7 @@ const NoteFormDialog: FC<NoteFormDialogProps> = ({ isShow, onClose, note }) => {
       className={`${isShow ? '' : 'hidden'} absolute top-0 left-0 h-screen w-screen`}
     >
       <div className="h-full w-full bg-black opacity-50" onClick={onClose} />
-      <div className="absolute bottom-0 left-0 h-1/3 w-full p-4 bg-white">
+      <div className="absolute bottom-0 left-0 h-1/5 w-full p-4 bg-white">
         <div className="flex">
           <input
             type="text"

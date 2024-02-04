@@ -1,10 +1,11 @@
-import { FC, ReactNode, useEffect, useState } from 'react'
+import { FC, MouseEventHandler, ReactNode, useState } from 'react'
 import BottomNavBar from './BottomNavBar'
 import IconButton from './IconButton'
 import { faXmark } from '@fortawesome/free-solid-svg-icons'
 import NoteFormDialog from './NoteFormDialog'
 import { useAppDispatch, useAppSelector } from '../hooks/redux'
-import { fetchNotes, noteSelector } from '../features/noteSlice'
+import { fetchNotes, noteSelector, setCurrentNote } from '../features/noteSlice'
+import { fetchSections } from '../features/sectionSlice'
 
 type NoteListDrawerProps = {
   isShow: boolean
@@ -13,21 +14,34 @@ type NoteListDrawerProps = {
 
 const NoteListDrawer: FC<NoteListDrawerProps> = ({ isShow, onClose }) => {
   const dispatch = useAppDispatch()
-  const { notes } = useAppSelector(noteSelector)
+  const { notes, currentNote } = useAppSelector(noteSelector)
 
   const [isShowDialog, setIsShowDialog] = useState(false)
 
-  useEffect(() => {
+  // ノート一覧を取得する
+  const handleClick = () => {
     dispatch(fetchNotes())
-  }, [dispatch])
+  }
+
+  // 選択したノートをセットする
+  const handleSelect = (noteId: string) => () => {
+    if (currentNote?.id !== noteId) {
+      dispatch(setCurrentNote(noteId))
+      dispatch(fetchSections(noteId))
+      onClose()
+    }
+  }
 
   return (
     <div
       className={`${isShow ? '' : 'hidden'} absolute top-0 left-0 h-screen w-screen bg-white`}
     >
+      <button type="button" onClick={handleClick}>
+        ノート一覧を取得
+      </button>
       <ul className="w-full">
         {notes.map((note) => (
-          <NoteList key={note.id} onClick={() => {}}>
+          <NoteList key={note.id} onClick={handleSelect(note.id ?? '')}>
             {note.name}
           </NoteList>
         ))}
@@ -47,7 +61,7 @@ const NoteListDrawer: FC<NoteListDrawerProps> = ({ isShow, onClose }) => {
 }
 
 type NoteListProps = {
-  onClick: () => void
+  onClick: MouseEventHandler<HTMLLIElement>
   children: ReactNode
 }
 
