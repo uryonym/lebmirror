@@ -4,7 +4,12 @@ import IconButton from './IconButton'
 import { faRotate, faXmark } from '@fortawesome/free-solid-svg-icons'
 import NoteFormDialog from './NoteFormDialog'
 import { useAppDispatch, useAppSelector } from '../hooks/redux'
-import { fetchNotes, noteSelector, setCurrentNote } from '../features/noteSlice'
+import {
+  destroyNote,
+  fetchNotes,
+  noteSelector,
+  setCurrentNote,
+} from '../features/noteSlice'
 import { fetchSections } from '../features/sectionSlice'
 import NoteList from './NoteList'
 import { Note } from '../lib/firestoreApi'
@@ -47,6 +52,14 @@ const NoteListDrawer: FC<NoteListDrawerProps> = ({ isShow, onClose }) => {
     setIsShowDialog(true)
   }
 
+  // 削除ボタンをクリックしたときの処理
+  const handleDelete = (noteId: string) => () => {
+    const confirm = window.confirm('本当に削除しますか？')
+    if (confirm) {
+      dispatch(destroyNote(noteId))
+    }
+  }
+
   return (
     <div
       className={`${isShow ? '' : 'hidden'} absolute top-0 left-0 h-screen w-screen bg-white`}
@@ -57,6 +70,7 @@ const NoteListDrawer: FC<NoteListDrawerProps> = ({ isShow, onClose }) => {
             key={note.id}
             onClick={handleSelect(note.id ?? '')}
             onClickEdit={handleEdit(note)}
+            onClickDelete={handleDelete(note.id ?? '')}
           >
             {note.name}
           </NoteList>
