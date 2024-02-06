@@ -7,6 +7,7 @@ import { useAppDispatch, useAppSelector } from '../hooks/redux'
 import { fetchNotes, noteSelector, setCurrentNote } from '../features/noteSlice'
 import { fetchSections } from '../features/sectionSlice'
 import NoteList from './NoteList'
+import { Note } from '../lib/firestoreApi'
 
 type NoteListDrawerProps = {
   isShow: boolean
@@ -18,6 +19,7 @@ const NoteListDrawer: FC<NoteListDrawerProps> = ({ isShow, onClose }) => {
   const { notes, currentNote } = useAppSelector(noteSelector)
 
   const [isShowDialog, setIsShowDialog] = useState(false)
+  const [selectNote, setSelectNote] = useState<Note | undefined>()
 
   // ノート一覧を取得する
   const handleGetNotes = () => {
@@ -33,20 +35,36 @@ const NoteListDrawer: FC<NoteListDrawerProps> = ({ isShow, onClose }) => {
     }
   }
 
+  // 新規作成ボタンをクリックしたときの処理
+  const handleNew = () => {
+    setSelectNote(undefined)
+    setIsShowDialog(true)
+  }
+
+  // 編集ボタンをクリックしたときの処理
+  const handleEdit = (note: Note) => () => {
+    setSelectNote(note)
+    setIsShowDialog(true)
+  }
+
   return (
     <div
       className={`${isShow ? '' : 'hidden'} absolute top-0 left-0 h-screen w-screen bg-white`}
     >
       <ul className="w-full">
         {notes.map((note) => (
-          <NoteList key={note.id} onClick={handleSelect(note.id ?? '')}>
+          <NoteList
+            key={note.id}
+            onClick={handleSelect(note.id ?? '')}
+            onClickEdit={handleEdit(note)}
+          >
             {note.name}
           </NoteList>
         ))}
       </ul>
       <BottomNavBar>
         <div>
-          <button type="button" onClick={() => setIsShowDialog(true)}>
+          <button type="button" onClick={handleNew}>
             新規作成
           </button>
           <IconButton icon={faRotate} onClick={handleGetNotes} />
@@ -56,6 +74,7 @@ const NoteListDrawer: FC<NoteListDrawerProps> = ({ isShow, onClose }) => {
       <NoteFormDialog
         isShow={isShowDialog}
         onClose={() => setIsShowDialog(false)}
+        note={selectNote}
       />
     </div>
   )

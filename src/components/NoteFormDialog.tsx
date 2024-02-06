@@ -1,4 +1,4 @@
-import { FC, useState } from 'react'
+import { FC, useEffect, useState } from 'react'
 import { Note } from '../lib/firestoreApi'
 import { useAppDispatch } from '../hooks/redux'
 import { changeNote, createNote } from '../features/noteSlice'
@@ -29,6 +29,10 @@ const NoteFormDialog: FC<NoteFormDialogProps> = ({ isShow, onClose, note }) => {
     }
     onClose()
   }
+
+  useEffect(() => {
+    setName(note ? note.name : '')
+  }, [note])
 
   return (
     <div
